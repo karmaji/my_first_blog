@@ -10,18 +10,19 @@ def register(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Your account has been created!!!')
             return redirect("login")
     else:
         form = UserRegistrationForm()
-    context = {
-        "form": form,
-        "title": "Register User",
-    }
-    return render(request, "accounts/register.html", context=context)
+    return render(request, "accounts/register.html", {'form':form})
 
 
 @login_required
+
 def profile(request):
+
+
     if request.method == "POST":
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(
@@ -32,13 +33,15 @@ def profile(request):
             p_form.save()
             messages.success(request, "Your profile has been updated successfully!")
             return redirect("user-profile")
+    
     else:
+        
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
 
-    context = {
-        "u_form": u_form,
-        "p_form": p_form,
-        "title": "User Profile",
-    }
-    return render(request, "accounts/profile.html", context)
+        context = {
+            "u_form": u_form,
+            "p_form": p_form,
+            "title": "User Profile",
+        }
+        return render(request, "accounts/profile.html", context)
